@@ -1,5 +1,13 @@
 import express from "express";
-
+import {
+  getCategories,
+  getCategoryItems,
+  getComments,
+  getItemDetails,
+  getRatings,
+  addComment,
+  addRating,
+} from "../controller/customerController.js";
 const customerRouter = express.Router();
 
 // Categories

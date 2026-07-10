@@ -1,4 +1,20 @@
 import express from "express";
+import {
+  addCategory,
+  getCategoriesAdmin,
+  updateCategory,
+  deleteCategory,
+  addMenuItem,
+  getAllMenuItems,
+  getAllComments,
+  deleteComment,
+  getAllRatings,
+  generateQRCode,
+  downloadQRCode,
+  getSingleItem,
+  updateMenuItem,
+  deleteMenuItem,
+} from "../controller/adminController.js";
 
 const adminRouter = express.Router();
 
