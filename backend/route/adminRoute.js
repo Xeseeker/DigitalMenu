@@ -1,4 +1,5 @@
 import express from "express";
+import auth from "../middleware/auth.js";
 import {
   addCategory,
   getCategoriesAdmin,
@@ -19,27 +20,27 @@ import {
 const adminRouter = express.Router();
 
 // Categories
-adminRouter.post("/categories", addCategory);
-adminRouter.get("/categories", getCategoriesAdmin);
-adminRouter.put("/categories/:categoryId", updateCategory);
-adminRouter.delete("/categories/:categoryId", deleteCategory);
+adminRouter.post("/categories", auth, addCategory);
+adminRouter.get("/categories", auth, getCategoriesAdmin);
+adminRouter.put("/categories/:categoryId", auth, updateCategory);
+adminRouter.delete("/categories/:categoryId", auth, deleteCategory);
 
 // Menu Items
-adminRouter.post("/items", addMenuItem);
-adminRouter.get("/items", getAllMenuItems);
-adminRouter.get("/items/:itemId", getSingleItem);
-adminRouter.put("/items/:itemId", updateMenuItem);
-adminRouter.delete("/items/:itemId", deleteMenuItem);
+adminRouter.post("/items", auth, addMenuItem);
+adminRouter.get("/items", auth, getAllMenuItems);
+adminRouter.get("/items/:itemId", auth, getSingleItem);
+adminRouter.put("/items/:itemId", auth, updateMenuItem);
+adminRouter.delete("/items/:itemId", auth, deleteMenuItem);
 
 // Comments
-adminRouter.get("/comments", getAllComments);
-adminRouter.delete("/comments/:commentId", deleteComment);
+adminRouter.get("/comments", auth, getAllComments);
+adminRouter.delete("/comments/:commentId", auth, deleteComment);
 
 // Ratings
-adminRouter.get("/ratings", getAllRatings);
+adminRouter.get("/ratings", auth, getAllRatings);
 
 // QR Code
-adminRouter.post("/qr/generate", generateQRCode);
-adminRouter.get("/qr/download", downloadQRCode);
+adminRouter.post("/qr/generate", auth, generateQRCode);
+adminRouter.get("/qr/download", auth, downloadQRCode);
 
 export default adminRouter;
