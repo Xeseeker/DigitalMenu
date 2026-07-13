@@ -1,27 +1,86 @@
 import db from "../config/db.js";
 import bcrypt from "bcryptjs";
-import cloudinary from "../config/cloudinary.js";
+import jwt from "jsonwebtoken";
+import uploadToCloudinary from "../util/uploadToCloudinary.js";
+
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Find admin by email
+    const [rows] = await db.query(
+      `
+      SELECT *
+      FROM admins
+      WHERE email = ?
+      `,
+      [email],
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    const admin = rows[0];
+
+    // Compare password with hashed password in DB
+    const isMatch = await bcrypt.compare(password, admin.password);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid email or password",
+      });
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      {
+        id: admin.id,
+        email: admin.email,
+      },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "7d",
+      },
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token,
+      admin: {
+        id: admin.id,
+        full_name: admin.full_name,
+        email: admin.email,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
 
 const addCategory = async (req, res) => {
   try {
-    const { name, description, image } = req.body;
+    const { name, description } = req.body;
     if (!name)
       return res.status(400).json({ message: "Category name is required" });
 
     // handle image upload to Cloudinary (support file, data-uri or remote URL)
-    let imageUrl = image || null;
+    let imageUrl = null;
     try {
-      if (req.file && req.file.path) {
-        const uploadRes = await cloudinary.uploader.upload(req.file.path, {
-          folder: "digital_menu/categories",
-        });
-        imageUrl = uploadRes.secure_url;
-      } else if (image) {
-        // image may be a data URI or a remote URL; Cloudinary can handle both
-        const uploadRes = await cloudinary.uploader.upload(image, {
-          folder: "digital_menu/categories",
-        });
-        imageUrl = uploadRes.secure_url;
+      if (req.file?.buffer) {
+        const result = await uploadToCloudinary(req.file.buffer, "categories");
+
+        imageUrl = result.secure_url;
       }
     } catch (uploadErr) {
       console.error("Cloudinary upload error:", uploadErr);
@@ -138,27 +197,22 @@ const deleteCategory = async (req, res) => {
 
 const addMenuItem = async (req, res) => {
   try {
-    const { category_id, name, description, price, image, is_available } =
-      req.body;
-    if (!category_id || !name || price === undefined) {
+    const { categoryId, name, description, price, is_available } = req.body;
+    //const categoryId = category || req.body.category_id;
+    console.log(req.body);
+    if (!categoryId || !name || !price) {
       return res
         .status(400)
-        .json({ message: "category_id, name and price are required" });
+        .json({ message: "category, name and price are required" });
     }
 
     // handle image upload
-    let imageUrl = image || null;
+    let imageUrl = null;
     try {
-      if (req.file && req.file.path) {
-        const uploadRes = await cloudinary.uploader.upload(req.file.path, {
-          folder: "digital_menu/items",
-        });
-        imageUrl = uploadRes.secure_url;
-      } else if (image) {
-        const uploadRes = await cloudinary.uploader.upload(image, {
-          folder: "digital_menu/items",
-        });
-        imageUrl = uploadRes.secure_url;
+      if (req.file?.buffer) {
+        const result = await uploadToCloudinary(req.file.buffer, "menu_items");
+
+        imageUrl = result.secure_url;
       }
     } catch (uploadErr) {
       console.error("Cloudinary upload error:", uploadErr);
@@ -170,7 +224,7 @@ const addMenuItem = async (req, res) => {
     const [result] = await db.query(
       "INSERT INTO menu_items (category_id, name, description, price, image, is_available) VALUES (?, ?, ?, ?, ?, ?)",
       [
-        category_id,
+        categoryId,
         name,
         description || null,
         price,
@@ -348,4 +402,5 @@ export {
   getSingleItem,
   updateMenuItem,
   deleteMenuItem,
+  login,
 };

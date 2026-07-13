@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getCategories,
+  getAllMenuItems,
   getCategoryItems,
   getComments,
   getItemDetails,
@@ -14,6 +15,7 @@ const customerRouter = express.Router();
 customerRouter.get("/categories", getCategories);
 
 // Menu Items
+customerRouter.get("/items", getAllMenuItems);
 customerRouter.get("/categories/:categoryId/items", getCategoryItems);
 
 // Single Item Details

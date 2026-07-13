@@ -1,5 +1,8 @@
 import express from "express";
 import cors from "cors";
+import adminRoutes from "./route/adminRoute.js";
+import router from "./middleware/register.js";
+import customerRouter from "./route/customerRoute.js";
 
 const app = express();
 
@@ -17,15 +20,9 @@ app.get("/api/health", (req, res) => {
   });
 });
 
-// app.use("/api/auth", authRoutes);
-// app.use("/api/rooms", roomRoutes);
-// app.use("/api/reservations", reservationRoutes);
-// app.use("/api/payments", paymentRoutes);
-// app.use("/api/users", userRoutes);
-// app.use("/api/admin", adminRoutes);
-
-// app.use(notFound);
-// app.use(errorHandler);
+app.use("/api/admin", adminRoutes);
+app.use("/api/register", router);
+app.use("/api/customer", customerRouter);
 
 const PORT = process.env.PORT || 5000;
 

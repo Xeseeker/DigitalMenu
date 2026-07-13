@@ -15,18 +15,24 @@ import {
   getSingleItem,
   updateMenuItem,
   deleteMenuItem,
+  login,
 } from "../controller/adminController.js";
+import { upload } from "../middleware/multer.js";
 
 const adminRouter = express.Router();
 
+adminRouter.post("/login", login);
+
 // Categories
-adminRouter.post("/categories", auth, addCategory);
+// adminRouter.post("/categories", auth, addCategory);
+
+adminRouter.post("/categories", auth, upload.single("image"), addCategory);
 adminRouter.get("/categories", auth, getCategoriesAdmin);
 adminRouter.put("/categories/:categoryId", auth, updateCategory);
 adminRouter.delete("/categories/:categoryId", auth, deleteCategory);
 
 // Menu Items
-adminRouter.post("/items", auth, addMenuItem);
+adminRouter.post("/items", auth, upload.single("image"), addMenuItem);
 adminRouter.get("/items", auth, getAllMenuItems);
 adminRouter.get("/items/:itemId", auth, getSingleItem);
 adminRouter.put("/items/:itemId", auth, updateMenuItem);

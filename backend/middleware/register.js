@@ -1,11 +1,11 @@
 import express from "express";
-import db from "../config/mysql.js";
+import db from "../config/db.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
+router.post("/", async (req, res) => {
   const { full_name, email, password } = req.body;
 
   try {
@@ -32,3 +32,5 @@ router.post("/register", async (req, res) => {
     });
   }
 });
+
+export default router;
