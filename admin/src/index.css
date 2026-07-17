@@ -1,18 +1,39 @@
-h2 {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --brand-green: #059669; /* tailwind emerald-600 */
+@layer base {
+  body {
+    @apply bg-secondary-50 text-secondary-900;
+  }
 }
 
-/* small helper to keep legacy structure working */
-html, body, #root {
-  height: 100%;
-}
-
-/* Admin-specific global utilities */
-.brand-btn {
-  @apply bg-emerald-600 text-white hover:bg-emerald-700;
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors duration-200 font-medium;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-secondary-700 border border-secondary-300 px-4 py-2 rounded-lg hover:bg-secondary-50 transition-colors duration-200 font-medium;
+  }
+  
+  .btn-danger {
+    @apply bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors duration-200 font-medium;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-secondary-200 p-6;
+  }
+  
+  .input-field {
+    @apply w-full px-4 py-2 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all duration-200;
+  }
+  
+  .page-header {
+    @apply mb-6;
+  }
+  
+  .page-title {
+    @apply text-2xl font-bold text-secondary-900;
+  }
 }

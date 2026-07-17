@@ -1,44 +1,55 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import MenuManager from "./pages/MenuManager";
-import Login from "./pages/Login";
-import Header from "./components/Header";
-import Sidebar from "./components/Sidebar";
-import "./index.css";
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
+import Notifications from './components/Notifications';
+import Login from './pages/Login';
+import Dashboard from './pages/Dashboard';
+import MenuItems from './pages/MenuItems';
+import Categories from './pages/Categories';
+import Comments from './pages/Comments';
+import Ratings from './pages/Ratings';
+import QRCodes from './pages/QRCodes';
 
 function App() {
-  const token = localStorage.getItem("admin_token");
-
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
-        <Header />
-        <div className="flex">
-          <Sidebar />
-          <main className="flex-1 p-6">
-            <Routes>
-              <Route path="/login" element={<Login />} />
-              <Route
-                path="/dashboard"
-                element={
-                  token ? <Dashboard /> : <Navigate to="/login" replace />
-                }
-              />
-              <Route
-                path="/menu"
-                element={
-                  token ? <MenuManager /> : <Navigate to="/login" replace />
-                }
-              />
-              <Route
-                path="/"
-                element={<Navigate to={token ? "/dashboard" : "/login"} />}
-              />
-            </Routes>
-          </main>
-        </div>
-      </div>
-    </BrowserRouter>
+    <AuthProvider>
+      <NotificationProvider>
+        <BrowserRouter>
+          <Routes>
+            {/* Public Routes */}
+            <Route path="/login" element={<Login />} />
+
+            {/* Protected Routes */}
+            <Route
+              path="/*"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Routes>
+                      <Route path="/dashboard" element={<Dashboard />} />
+                      <Route path="/menu-items" element={<MenuItems />} />
+                      <Route path="/categories" element={<Categories />} />
+                      <Route path="/comments" element={<Comments />} />
+                      <Route path="/ratings" element={<Ratings />} />
+                      <Route path="/qr-codes" element={<QRCodes />} />
+                      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                    </Routes>
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Default redirect */}
+            <Route path="/" element={<Navigate to="/login" replace />} />
+          </Routes>
+          <Notifications />
+        </BrowserRouter>
+      </NotificationProvider>
+    </AuthProvider>
   );
 }
 
