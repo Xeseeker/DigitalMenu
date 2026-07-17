@@ -1,0 +1,18 @@
+h2 {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand-green: #059669; /* tailwind emerald-600 */
+}
+
+/* small helper to keep legacy structure working */
+html, body, #root {
+  height: 100%;
+}
+
+/* Admin-specific global utilities */
+.brand-btn {
+  @apply bg-emerald-600 text-white hover:bg-emerald-700;
+}
