@@ -1,13 +1,18 @@
 import { useCallback, useMemo } from "react";
 import axios from "axios";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
+
+const getErrorMessage = (error) =>
+  error.response?.data?.message || error.message || "Failed to reach the API";
 
 export const useApi = () => {
   const getCategories = useCallback(async () => {
@@ -16,7 +21,7 @@ export const useApi = () => {
       return { data: response.data.categories, error: null };
     } catch (error) {
       console.error("Error fetching categories:", error);
-      return { data: null, error: error.message };
+      return { data: null, error: getErrorMessage(error) };
     }
   }, []);
 
@@ -26,29 +31,30 @@ export const useApi = () => {
       return { data: response.data.items, error: null };
     } catch (error) {
       console.error("Error fetching menu items:", error);
-      return { data: null, error: error.message };
+      return { data: null, error: getErrorMessage(error) };
     }
   }, []);
 
   const getCategoryItems = useCallback(async (categoryId) => {
     try {
-      const response = await api.get(
-        `/customer/categories/${categoryId}/items`,
-      );
+      const response = await api.get(`/customer/categories/${categoryId}/items`);
       return { data: response.data.items, error: null };
     } catch (error) {
       console.error("Error fetching category items:", error);
-      return { data: null, error: error.message };
+      return { data: null, error: getErrorMessage(error) };
     }
   }, []);
 
   const getItemDetails = useCallback(async (itemId) => {
     try {
+      if (!itemId) {
+        return { data: null, error: "Invalid item ID" };
+      }
       const response = await api.get(`/customer/items/${itemId}`);
       return { data: response.data.item, error: null };
     } catch (error) {
       console.error("Error fetching item details:", error);
-      return { data: null, error: error.message };
+      return { data: null, error: getErrorMessage(error) };
     }
   }, []);
 
@@ -58,7 +64,7 @@ export const useApi = () => {
       return { data: response.data, error: null };
     } catch (error) {
       console.error("Error fetching ratings:", error);
-      return { data: null, error: error.message };
+      return { data: null, error: getErrorMessage(error) };
     }
   }, []);
 
@@ -70,7 +76,7 @@ export const useApi = () => {
       return { data: response.data, error: null };
     } catch (error) {
       console.error("Error adding rating:", error);
-      return { data: null, error: error.message };
+      return { data: null, error: getErrorMessage(error) };
     }
   }, []);
 

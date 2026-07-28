@@ -351,24 +351,31 @@
   border-radius: 0.5rem;
   cursor: pointer;
   font-weight: 600;
+  z-index: 10;
 }
 
 @media (max-width: 767px) {
   .search-filter-bar {
     grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
   }
 
   .layout-toggle {
     width: 100%;
+    margin-top: var(--spacing-sm);
   }
 
   .layout-toggle button {
     flex: 1;
+    min-height: 44px; /* Better touch target */
   }
 
   .filter-toggle {
-    display: block;
+    display: flex;
     width: 100%;
+    min-height: 44px; /* Better touch target */
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -479,8 +486,13 @@
 }
 
 @media (max-width: 767px) {
+  .menu-card {
+    min-height: auto; /* Remove fixed min-height for better flexibility */
+  }
+
   .menu-card-image {
     height: 150px;
+    min-height: 150px;
   }
 
   .menu-card-content {
@@ -493,6 +505,12 @@
 
   .menu-card-price {
     font-size: 1.25rem;
+  }
+
+  /* Ensure card is clickable on mobile */
+  .menu-card {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -704,16 +722,16 @@
     position: fixed;
     top: 0;
     left: -100%;
-    width: 80%;
-    max-width: 300px;
+    width: 85%;
+    max-width: 320px;
     height: 100vh;
     padding: var(--spacing-lg);
     background-color: var(--color-white);
-    z-index: 500;
+    z-index: 1000;
     transition: left 0.3s ease;
     border-radius: 0;
     overflow-y: auto;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
   }
 
   .filter-sidebar.open {
@@ -722,12 +740,52 @@
 
   .filter-close {
     display: block;
+    min-width: 44px;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
   }
 
   .filter-title {
     margin-bottom: var(--spacing-lg);
     padding-bottom: var(--spacing-lg);
     border-bottom: 1px solid var(--color-border);
+  }
+
+  /* Add backdrop overlay */
+  .filter-sidebar::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .filter-sidebar.open::before {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Separate backdrop element */
+  .filter-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+  }
+
+  .filter-backdrop.active {
+    display: block;
   }
 }
 

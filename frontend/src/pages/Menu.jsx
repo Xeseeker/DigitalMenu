@@ -124,6 +124,14 @@ export const Menu = () => {
               onClose={() => setIsFilterOpen(false)}
             />
 
+            {/* Backdrop overlay for mobile filter */}
+            {isFilterOpen && (
+              <div
+                className="filter-backdrop active"
+                onClick={() => setIsFilterOpen(false)}
+              />
+            )}
+
             {/* Menu Items */}
             <div>
               {filteredItems.length > 0 ? (
