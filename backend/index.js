@@ -25,10 +25,11 @@ app.use("/api/register", router);
 app.use("/api/customer", customerRouter);
 
 const PORT = process.env.PORT || 5000;
+const HOST = process.env.HOST || '0.0.0.0'; // Listen on all interfaces for mobile access
 
-app.listen(PORT, () => {
+app.listen(PORT, HOST, () => {
   console.log(
-    `Server running on port ${PORT} in ${process.env.NODE_ENV || "development"} mode`,
+    `Server running on http://${HOST}:${PORT} in ${process.env.NODE_ENV || "development"} mode`,
   );
   console.log(
     `Database configuration loaded: ${process.env.DB_HOST ? "yes" : "no"}`,
